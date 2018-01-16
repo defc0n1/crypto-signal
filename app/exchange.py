@@ -103,6 +103,7 @@ class ExchangeInterface():
         for exchange in self.exchanges:
             exchange_markets[exchange] = self.exchanges[exchange].load_markets()
             time.sleep(self.exchanges[exchange].rateLimit / 1000)
+        print(exchange_markets)
         return exchange_markets
 
 
