@@ -45,6 +45,7 @@ class ExchangeInterface():
                             'password']
 
                     self.exchanges[new_exchange.id] = new_exchange
+                    print("Exchange loaded %s", new_exchange)
 
                 else:
                     print("Unable to load exchange %s", new_exchange)
