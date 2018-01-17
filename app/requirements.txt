@@ -10,3 +10,4 @@ TA-lib==0.4.15
 google-api-python-client==1.6.4
 tweepy==3.5.0
 textblob==0.15.0
+beautifulsoup4==4.6.0

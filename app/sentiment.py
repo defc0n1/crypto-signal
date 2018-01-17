@@ -26,15 +26,18 @@ class SentimentAnalyzer():
 
     def analyze_youtube_sentiment(self,channels):
         print("analyzing youtube sentiment")
+        print(channels)
         youtube_analyzer = YoutubeAnalysis()
         DEVELOPER_KEY = "AIzaSyDZCSMHobf8xPmmWF1CvqQiwo5wUXc3Bec"
         YOUTUBE_API_SERVICE_NAME = "youtube"
         YOUTUBE_API_VERSION = "v3"
         youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
         #get list of youtube channels - extract channel id - analyze them all
-        videos = youtube_analyzer.get_videos_FromChannel(youtube,"UCLXo7UDZvByw2ixzpQCufnA","viewCount")
-        data = youtube_analyzer.get_video_infos(youtube,videos)
-        comments = youtube_analyzer.get_comment_threads(youtube,videos)
-        print(videos)
-        print(data)
-        print(comments)
+        #UCLXo7UDZvByw2ixzpQCufnA
+        for channel in channels:
+             videos = youtube_analyzer.get_videos_FromChannel(youtube,channel,"viewCount")
+             data = youtube_analyzer.get_video_infos(youtube,videos)
+             comments = youtube_analyzer.get_comment_threads(youtube,videos)
+             print(videos)
+             print(data)
+             print(comments)

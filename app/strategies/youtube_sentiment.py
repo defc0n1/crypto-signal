@@ -2,6 +2,9 @@ from apiclient.discovery import build
 import pandas as pd
 import time
 
+import bs4,requests,string,json,itertools
+from bs4 import BeautifulSoup
+
 """Perform sentiment analysis on youtube
 """
 
@@ -27,6 +30,14 @@ class YoutubeAnalysis():
 			).execute()
 
 		return search_response.get("items",[])
+
+
+	def get_channel_ids(self,channels):
+		for channel in channels:
+			body = requests.get(channel)
+			bodySoup = BeautifulSoup(body.text)
+			channelId = bodySoup.find_all({"button"}, )
+
 
 	def get_comment_threads(self,youtube,videos):
 		tempComments = []

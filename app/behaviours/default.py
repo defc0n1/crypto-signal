@@ -50,6 +50,36 @@ class DefaultBehaviour():
             market_data (dict): A dictionary containing the market data of the symbols to analyze.
         """
 
+        channels = ['UCLXo7UDZvByw2ixzpQCufnA',
+        'UCTKyJALgd09WxZBuWVbZzXQ',
+        'UCmA06PHZc6O--2Yw4Vt4Wug',
+        'UCkpMhY4N4ZjpqKMIjzLplKw',
+        'UCWZbtMeOAb_qpEVUl551l7w',
+        'UCPWHmSfAsAiaKhMxNoIoByg',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCnLrtqd5qxC_f1lOnrybpnA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UC67AEEecqFEc92nVvcqKdhA',
+        'UCTKyJALgd09WxZBuWVbZzXQ',
+        'UCmaAtMHgspY0au0NR5oz8PA',
+        'UCt_oM56Ui0BCCgi0Yc-Wh3Q',
+        'UCcx5piGsKocIXdgnEIASKFA',
+        'UCLnQ34ZBSjy2JQjeRudFEDw',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCCoF3Mm-VzzZXSHtQKD8Skg',
+        'UCEhFzdgTPR8MmeL0z-xbA3g',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'CBQEgNYE8pB0qrUR5On9jYA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCkpt3vvZ0Y0wvTX2L-lkxsg',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCv6-ssVyI8zNcZsghkwudHA',
+        'UCUullOp2tc92dsu-yW3p_0g',
+        'UC-f5nPBEDyUBZz_jOPBwAfQ',
+        'UCu7Sre5A1NMV8J3s2FhluCw']
+
         for exchange in market_data:
             for market_pair in market_data[exchange]:
 
@@ -94,7 +124,7 @@ class DefaultBehaviour():
                         market_data[exchange][market_pair]['symbol']
                     )
 
-                    youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment("youtube_analyzer")
+                    youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels)
 
                 except ccxt.errors.RequestTimeout:
                     continue
