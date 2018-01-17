@@ -10,7 +10,7 @@ class DefaultBehaviour():
     """Default behaviour which gives users basic trading information.
     """
 
-    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer,notifier,sentiment_analyzer):
+    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer,sentiment_analyzer,notifier):
         """Initializes DefaultBehaviour class.
 
         Args:
@@ -88,6 +88,10 @@ class DefaultBehaviour():
 
                     macd_data = self.strategy_analyzer.analyze_macd(
                         one_day_historical_data
+                    )
+
+                    twitter_sentiment = self.sentiment_analyzer.analyze_twitter_sentiment(
+                        market_data[exchange][market_pair]['symbol']
                     )
 
                 except ccxt.errors.RequestTimeout:

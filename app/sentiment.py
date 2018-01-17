@@ -18,3 +18,9 @@ class SentimentAnalyzer():
     def __init__(self,exchange_interface):
         self.__exchange_interface = exchange_interface
         self.logger = structlog.get_logger()
+
+    def analyze_twitter_sentiment(self, market_pair):
+        print("analyzing twitter sentiment")
+
+    def analyze_yotube_sentiment(self,channels):
+        print("analyzing youtube sentiment")

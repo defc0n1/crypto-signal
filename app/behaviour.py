@@ -70,8 +70,9 @@ class Behaviour():
             behaviour_config,
             exchange_interface,
             strategy_analyzer,
-            notifier,
-            sentiment_analyzer
+            sentiment_analyzer,
+            notifier
+            
             )
 
         return behaviour
