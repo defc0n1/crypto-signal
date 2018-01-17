@@ -21,7 +21,6 @@ def main():
     logs.configure_logging(settings['loglevel'], settings['log_mode'])
 
     # Configure and run configured behaviour.
-    print(config)
     behaviour_manager = Behaviour(config)
     behaviour = behaviour_manager.get_behaviour(settings['selected_task'])
 

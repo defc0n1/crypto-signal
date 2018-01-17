@@ -94,6 +94,8 @@ class DefaultBehaviour():
                         market_data[exchange][market_pair]['symbol']
                     )
 
+                    youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment("youtube_analyzer")
+
                 except ccxt.errors.RequestTimeout:
                     continue
 
