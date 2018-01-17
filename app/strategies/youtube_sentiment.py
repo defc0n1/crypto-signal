@@ -5,7 +5,7 @@ import time
 """Perform sentiment analysis on youtube
 """
 
-class Youtube_analysis():
+class YoutubeAnalysis():
 
 	def __init__(self):
 

@@ -26,6 +26,7 @@ class DefaultBehaviour():
         self.behaviour_config = behaviour_config
         self.exchange_interface = exchange_interface
         self.strategy_analyzer = strategy_analyzer
+        self.sentiment_analyzer = sentiment_analyzer
         self.notifier = notifier
 
     def run(self, market_pairs):
