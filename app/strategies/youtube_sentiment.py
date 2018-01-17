@@ -50,3 +50,23 @@ class Youtube_analysis():
 		return tempComments
 
 
+	def getVideoInfos(videos):
+		videoList = {}
+		for search_result in videos:
+			if search_result["id"]["kind"] =="youtube#video":
+				videoList[search_result["id"]["videoId"]] = search_result["snippet"]["title"]
+
+		s = ",".join(videoList.keys())
+		videos_list_response = youtube.videos().list(id=s,part='id,statistics').execute()
+		res = []
+		for i in videos_list_response['items']:
+			temp_res = dict(v_title = videoList[i['id']])
+			temp_res.update(i['statistics'])
+			res.append(temp_res)
+
+		data = pd.DataFrame.from_dict(res)
+		data['viewCount'] = data['viewCount'].map(lambda x : float(x))
+		data['commentCount'] = data['commentCount'].map(lambda x : float(x))
+		return data
+
+
