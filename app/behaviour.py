@@ -6,6 +6,7 @@ import structlog
 from exchange import ExchangeInterface
 from notification import Notifier
 from analysis import StrategyAnalyzer
+from sentiment import SentimentAnalyzer
 from database import DatabaseHandler
 from behaviours.default import DefaultBehaviour
 from behaviours.rsi_bot import RSIBot
@@ -61,13 +62,16 @@ class Behaviour():
 
         strategy_analyzer = StrategyAnalyzer(exchange_interface)
 
+        sentiment_analyzer = SentimentAnalyzer(exchange_interface)
+
         notifier = Notifier(self.config.get_notifier_config())
 
         behaviour = DefaultBehaviour(
             behaviour_config,
             exchange_interface,
             strategy_analyzer,
-            notifier
+            notifier,
+            sentiment_analyzer
             )
 
         return behaviour

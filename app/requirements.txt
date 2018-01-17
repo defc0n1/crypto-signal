@@ -7,3 +7,6 @@ sqlalchemy==1.2.0
 pandas==0.21.0
 stockstats==0.2.0
 TA-lib==0.4.15
+google-api-python-client==1.6.4
+tweepy==3.5.0
+textblob==0.15.0

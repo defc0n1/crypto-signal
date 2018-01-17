@@ -10,7 +10,7 @@ class DefaultBehaviour():
     """Default behaviour which gives users basic trading information.
     """
 
-    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer, notifier):
+    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer,notifier,sentiment_analyzer):
         """Initializes DefaultBehaviour class.
 
         Args:
