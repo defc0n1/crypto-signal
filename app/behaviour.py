@@ -10,6 +10,7 @@ from sentiment import SentimentAnalyzer
 from database import DatabaseHandler
 from behaviours.default import DefaultBehaviour
 from behaviours.rsi_bot import RSIBot
+from behaviours.af_bot import AFBot
 
 
 class Behaviour():
@@ -44,6 +45,9 @@ class Behaviour():
         if selected_behaviour == 'rsi_bot':
             behaviour = self.__configure_rsi_bot(behaviour_config)
 
+        if selected_behaviour =='af_bot':
+            behaviour = self.__configure_af_bot(behaviour_config)
+
         return behaviour
 
 
@@ -70,7 +74,6 @@ class Behaviour():
             behaviour_config,
             exchange_interface,
             strategy_analyzer,
-            sentiment_analyzer,
             notifier
             
             )
@@ -100,5 +103,31 @@ class Behaviour():
             strategy_analyzer,
             notifier,
             db_handler)
+
+        return behaviour
+
+
+    def __configure_af_bot(self, behaviour_config):
+        """Configures and returns the rsi bot behaviour class.
+
+        Args:
+            behaviour_config (dict): A dictionary of configuration values pertaining to the
+                behaviour.
+
+        Returns:
+            RSIBot: A class of functionality for the rsi bot behaviour.
+        """
+
+        exchange_interface = ExchangeInterface(self.config.get_exchange_config())
+        strategy_analyzer = StrategyAnalyzer(exchange_interface)
+        notifier = Notifier(self.config.get_notifier_config())
+        
+
+        behaviour = AFBot(
+            behaviour_config,
+            exchange_interface,
+            strategy_analyzer,
+            sentiment_analyzer,
+            notifier)
 
         return behaviour

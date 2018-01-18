@@ -6,11 +6,11 @@
 import ccxt
 import structlog
 
-class DefaultBehaviour():
+class AFBot():
     """Default behaviour which gives users basic trading information.
     """
 
-    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer, notifier):
+    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer,sentiment_analyzer,notifier):
         """Initializes DefaultBehaviour class.
 
         Args:
@@ -26,6 +26,7 @@ class DefaultBehaviour():
         self.behaviour_config = behaviour_config
         self.exchange_interface = exchange_interface
         self.strategy_analyzer = strategy_analyzer
+        self.sentiment_analyzer = sentiment_analyzer
         self.notifier = notifier
 
     def run(self, market_pairs):
@@ -49,8 +50,62 @@ class DefaultBehaviour():
             market_data (dict): A dictionary containing the market data of the symbols to analyze.
         """
 
+        channels = ['UCLXo7UDZvByw2ixzpQCufnA',
+        'UCTKyJALgd09WxZBuWVbZzXQ',
+        'UCmA06PHZc6O--2Yw4Vt4Wug',
+        'UCkpMhY4N4ZjpqKMIjzLplKw',
+        'UCPWHmSfAsAiaKhMxNoIoByg',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UC67AEEecqFEc92nVvcqKdhA',
+        'UCTKyJALgd09WxZBuWVbZzXQ',
+        'UCmaAtMHgspY0au0NR5oz8PA',
+        'UCt_oM56Ui0BCCgi0Yc-Wh3Q',
+        'UCcx5piGsKocIXdgnEIASKFA',
+        'UCLnQ34ZBSjy2JQjeRudFEDw',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCCoF3Mm-VzzZXSHtQKD8Skg',
+        'UCEhFzdgTPR8MmeL0z-xbA3g',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'CBQEgNYE8pB0qrUR5On9jYA',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCkpt3vvZ0Y0wvTX2L-lkxsg',
+        'UCLXo7UDZvByw2ixzpQCufnA',
+        'UCv6-ssVyI8zNcZsghkwudHA',
+        'UCUullOp2tc92dsu-yW3p_0g',
+        'UC-f5nPBEDyUBZz_jOPBwAfQ',
+        'UCu7Sre5A1NMV8J3s2FhluCw']
+
+        #twitter_sentiment = self.sentiment_analyzer.analyze_twitter_sentiment(market_data[exchange][market_pair]['symbol'])
+
+        
+        symbols = []
+        symbol_name = {}
+        name_symbol = {}
+
+        for exchange in market_data:
+            print(exchange)
+            if exchange == "bittrex":
+                    
+                for market_pair in market_data[exchange]:
+                    #print(market_data[exchange][market_pair])
+                    symbols.append(market_data[exchange][market_pair]['base'])
+                    symbol = market_data[exchange][market_pair]['info']['MarketCurrency']
+                    name = market_data[exchange][market_pair]['info']['MarketCurrencyLong'].lower()
+                    symbol_name[symbol] = name
+                    name_symbol[name] = symbol
+                try:
+
+                    youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels,symbols,symbol_name,name_symbol)
+                except:
+                    print("Error analysing youtube sentiement")
         for exchange in market_data:
             for market_pair in market_data[exchange]:
+
+
+                
 
                 try:
                     one_day_historical_data = self.strategy_analyzer.get_historical_data(
@@ -66,9 +121,7 @@ class DefaultBehaviour():
                     )
 
                     rsi_data = self.strategy_analyzer.analyze_rsi(
-                        one_day_historical_data,
-                        self.behaviour_config['rsi']['hot'],
-                        self.behaviour_config['rsi']['cold']
+                        one_day_historical_data
                     )
 
                     sma_data = self.strategy_analyzer.analyze_sma(
@@ -80,9 +133,7 @@ class DefaultBehaviour():
                     )
 
                     breakout_data = self.strategy_analyzer.analyze_breakout(
-                        five_minute_historical_data,
-                        self.behaviour_config['breakout']['hot'],
-                        self.behaviour_config['breakout']['cold']
+                        five_minute_historical_data
                     )
 
                     ichimoku_data = self.strategy_analyzer.analyze_ichimoku_cloud(
@@ -92,6 +143,10 @@ class DefaultBehaviour():
                     macd_data = self.strategy_analyzer.analyze_macd(
                         one_day_historical_data
                     )
+
+
+
+
 
                 except ccxt.errors.RequestTimeout:
                     continue
@@ -105,6 +160,7 @@ class DefaultBehaviour():
                     self.notifier.notify_all(
                         message="{} is over bought!".format(market_pair)
                     )
+
                 elif rsi_data['is_hot']:
                     self.notifier.notify_all(
                         message="{} is over sold!".format(market_pair)
