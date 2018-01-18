@@ -54,10 +54,8 @@ class DefaultBehaviour():
         'UCTKyJALgd09WxZBuWVbZzXQ',
         'UCmA06PHZc6O--2Yw4Vt4Wug',
         'UCkpMhY4N4ZjpqKMIjzLplKw',
-        'UCWZbtMeOAb_qpEVUl551l7w',
         'UCPWHmSfAsAiaKhMxNoIoByg',
         'UCLXo7UDZvByw2ixzpQCufnA',
-        'UCnLrtqd5qxC_f1lOnrybpnA',
         'UCLXo7UDZvByw2ixzpQCufnA',
         'UCLXo7UDZvByw2ixzpQCufnA',
         'UC67AEEecqFEc92nVvcqKdhA',
@@ -89,7 +87,7 @@ class DefaultBehaviour():
 
         for exchange in market_data:
             for market_pair in market_data[exchange]:
-                print(market_data[exchange][market_pair])
+                #print(market_data[exchange][market_pair])
                 symbols.append(market_data[exchange][market_pair]['base'])
                 symbol = market_data[exchange][market_pair]['info']['MarketCurrency']
                 name = market_data[exchange][market_pair]['info']['MarketCurrencyLong'].lower()

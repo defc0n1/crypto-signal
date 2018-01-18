@@ -38,7 +38,7 @@ class SentimentAnalyzer():
         #print(symbols)
         for channel in channels:
              videos = youtube_analyzer.get_videos_FromChannel(youtube,channel,"viewCount")
-             data = youtube_analyzer.get_video_infos(youtube,videos)
+             #data = youtube_analyzer.get_video_infos(youtube,videos)
              comments = youtube_analyzer.get_comment_threads(youtube,videos)
              text = ''
              for comment in comments:
@@ -47,7 +47,10 @@ class SentimentAnalyzer():
              #print(symbol_name)
              #print(name_symbol)
              coins = text_sentiment.extract_symbols(text,symbol_name,name_symbol)
-             print(coins)
+             sentiment, overall = text_sentiment.get_sentiment_analysis(text, coins)
+             to_buy = text_sentiment.get_verdict(sentiment, overall)
+             print("BUY:")
+             print(to_buy)
              #print(videos)
              ##print(data)
              #print(comments)
