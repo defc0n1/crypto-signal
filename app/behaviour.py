@@ -211,9 +211,11 @@ class Behaviour(object):
             RSIBot: A class of functionality for the rsi bot behaviour.
         """
 
-        exchange_interface = ExchangeInterface(self.config.get_exchange_config())
+        exchange_interface = ExchangeInterface(self.config.exchanges)
         strategy_analyzer = StrategyAnalyzer(exchange_interface)
-        notifier = Notifier(self.config.get_notifier_config())
+        sentiment_analyzer = SentimentAnalyzer(exchange_interface)
+        notifier = Notifier(self.config.notifiers)
+        db_handler = DatabaseHandler(self.config.database)
         
 
         behaviour = AFBot(

@@ -4,7 +4,7 @@
     "market_pairs": [],
     "loglevel": "",
     "update_interval": 300,
-    "selected_task": "default"
+    "selected_task": "af_bot"
   },
 
   "database": {
@@ -89,6 +89,7 @@
         "cold": 0.4
       }
     },
+    "af_bot": {},
     "rsi_bot": {
       "mode": "simulate",
       "open_order_max_hours": 24,
