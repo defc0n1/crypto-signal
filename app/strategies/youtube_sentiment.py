@@ -43,7 +43,7 @@ class YoutubeAnalysis():
 		tempComments = []
 		for video in videos:
 			time.sleep(1.0)
-			print(video["snippet"]["title"])
+			#print(video["snippet"]["title"])
 			results = youtube.commentThreads().list(
 				part="snippet",
 				videoId = video["id"]["videoId"],

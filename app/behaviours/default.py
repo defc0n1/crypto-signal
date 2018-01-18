@@ -80,8 +80,13 @@ class DefaultBehaviour():
         'UC-f5nPBEDyUBZz_jOPBwAfQ',
         'UCu7Sre5A1NMV8J3s2FhluCw']
 
+        #twitter_sentiment = self.sentiment_analyzer.analyze_twitter_sentiment(market_data[exchange][market_pair]['symbol'])
+
+        #youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels)
+
         for exchange in market_data:
             for market_pair in market_data[exchange]:
+                print(market_data[exchange][market_pair]['symbol'])
 
                 try:
                     one_day_historical_data = self.strategy_analyzer.get_historical_data(
@@ -120,11 +125,7 @@ class DefaultBehaviour():
                         one_day_historical_data
                     )
 
-                    twitter_sentiment = self.sentiment_analyzer.analyze_twitter_sentiment(
-                        market_data[exchange][market_pair]['symbol']
-                    )
 
-                    youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels)
 
                 except ccxt.errors.RequestTimeout:
                     continue
