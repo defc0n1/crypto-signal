@@ -11,7 +11,7 @@ import structlog
 import pandas
 
 from strategies.youtube_sentiment import YoutubeAnalysis
-from strategies.twitter_sentiment import Twitter
+#from strategies.twitter_sentiment import Twitter
 from strategies.text_sentiment import TextSentiment
 
 class SentimentAnalyzer():
