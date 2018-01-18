@@ -25,24 +25,29 @@ class SentimentAnalyzer():
     def analyze_twitter_sentiment(self, market_pair):
         print("analyzing twitter sentiment")
 
-    def analyze_youtube_sentiment(self,channels):
+    def analyze_youtube_sentiment(self,channels,symbols,symbol_name,name_symbol):
         print("analyzing youtube sentiment")
         youtube_analyzer = YoutubeAnalysis()
         text_sentiment = TextSentiment()
+
 
         DEVELOPER_KEY = "AIzaSyDZCSMHobf8xPmmWF1CvqQiwo5wUXc3Bec"
         YOUTUBE_API_SERVICE_NAME = "youtube"
         YOUTUBE_API_VERSION = "v3"
         youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
-
+        #print(symbols)
         for channel in channels:
              videos = youtube_analyzer.get_videos_FromChannel(youtube,channel,"viewCount")
              data = youtube_analyzer.get_video_infos(youtube,videos)
              comments = youtube_analyzer.get_comment_threads(youtube,videos)
+             text = ''
              for comment in comments:
-             	print(comment["text"])
-             #coins = text_sentiment.extract_symbols(comments)
-             #print(coins)
+             	#print(comment["text"])
+             	text += str(comment["text"],'utf-8')
+             #print(symbol_name)
+             #print(name_symbol)
+             coins = text_sentiment.extract_symbols(text,symbol_name,name_symbol)
+             print(coins)
              #print(videos)
              ##print(data)
              #print(comments)

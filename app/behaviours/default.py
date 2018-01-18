@@ -82,11 +82,25 @@ class DefaultBehaviour():
 
         #twitter_sentiment = self.sentiment_analyzer.analyze_twitter_sentiment(market_data[exchange][market_pair]['symbol'])
 
-        #youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels)
+        
+        symbols = []
+        symbol_name = {}
+        name_symbol = {}
 
         for exchange in market_data:
             for market_pair in market_data[exchange]:
-                print(market_data[exchange][market_pair]['symbol'])
+                print(market_data[exchange][market_pair])
+                symbols.append(market_data[exchange][market_pair]['base'])
+                symbol = market_data[exchange][market_pair]['info']['MarketCurrency']
+                name = market_data[exchange][market_pair]['info']['MarketCurrencyLong'].lower()
+                symbol_name[symbol] = name
+                name_symbol[name] = symbol
+        youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels,symbols,symbol_name,name_symbol)
+        for exchange in market_data:
+            for market_pair in market_data[exchange]:
+
+
+                
 
                 try:
                     one_day_historical_data = self.strategy_analyzer.get_historical_data(
@@ -124,6 +138,8 @@ class DefaultBehaviour():
                     macd_data = self.strategy_analyzer.analyze_macd(
                         one_day_historical_data
                     )
+
+
 
 
 
