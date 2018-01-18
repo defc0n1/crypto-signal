@@ -9,14 +9,12 @@ from analysis import StrategyAnalyzer
 from sentiment import SentimentAnalyzer
 from database import DatabaseHandler
 from behaviours.default import DefaultBehaviour
-<<<<<<< HEAD
-from behaviours.rsi_bot import RSIBot
+
 from behaviours.af_bot import AFBot
-=======
+
 from behaviours.rsi_bot import RsiBotBehaviour
 from behaviours.reporter import ReporterBehaviour
 from behaviours.ui.server import ServerBehaviour
->>>>>>> cf45720f5b9a47ee855d8222c3ffde69a5cfb717
 
 
 class Behaviour(object):
