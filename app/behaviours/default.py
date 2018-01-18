@@ -93,7 +93,11 @@ class DefaultBehaviour():
                 name = market_data[exchange][market_pair]['info']['MarketCurrencyLong'].lower()
                 symbol_name[symbol] = name
                 name_symbol[name] = symbol
-        youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels,symbols,symbol_name,name_symbol)
+        try:
+
+            youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels,symbols,symbol_name,name_symbol)
+        except:
+            print("Error analysing youtube sentiement")
         for exchange in market_data:
             for market_pair in market_data[exchange]:
 
