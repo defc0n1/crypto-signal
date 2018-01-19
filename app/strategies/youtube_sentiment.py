@@ -5,6 +5,11 @@ import time
 import bs4,requests,string,json,itertools
 from bs4 import BeautifulSoup
 
+import logging
+
+
+logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
+
 """Perform sentiment analysis on youtube
 """
 
@@ -18,6 +23,9 @@ class YoutubeAnalysis():
 		YOUTUBE_API_VERSION = "v3"
 
 		youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
+		
+
+		
 
 	def get_videos_FromChannel(self,youtube,channelId,order):
 		search_response = youtube.search().list(

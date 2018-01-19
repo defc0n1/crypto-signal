@@ -29,7 +29,7 @@
 
     "gdax": {
       "required": {
-        "enabled": false
+        "enabled": true
       },
       "optional": {
         "key": "aea59df1e9267883dbb9b19faca4ee54",
@@ -39,7 +39,7 @@
 
     "binance": {
       "required": {
-        "enabled": false
+        "enabled": true
       },
       "optional": {
         "key": "N4pOnBgids2g0jexFCdVouYXlShie8LiPneBWoFsIsf7bsmIW0d2PlnsZwfQvQwM",
