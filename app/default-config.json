@@ -105,11 +105,11 @@
         "cold": true
       }
     },
-<<<<<<< HEAD
+
     "af_bot": {},
-=======
+
     "server": {},
->>>>>>> adfce6016fa466dd37902fd530761ea4a880c102
+
     "rsi_bot": {
       "mode": "simulate",
       "open_order_max_hours": 24,
