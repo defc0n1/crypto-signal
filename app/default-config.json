@@ -87,9 +87,29 @@
       "breakout": {
         "hot": 0.8,
         "cold": 0.4
+      },
+      "macd": {
+        "hot": 0.0,
+        "cold": 0.0
+      },
+      "sma": {
+        "hot": 1.0,
+        "cold": 1.0
+      },
+      "ema": {
+        "hot": 1.0,
+        "cold": 1.0
+      },
+      "ichimoku": {
+        "hot": true,
+        "cold": true
       }
     },
+<<<<<<< HEAD
     "af_bot": {},
+=======
+    "server": {},
+>>>>>>> adfce6016fa466dd37902fd530761ea4a880c102
     "rsi_bot": {
       "mode": "simulate",
       "open_order_max_hours": 24,
