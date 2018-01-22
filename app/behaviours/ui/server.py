@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 
 import ccxt
 import structlog
-from backtesting.backtest import Backtester
+from behaviours.ui.backtesting.backtest import Backtester
 
 
 """
