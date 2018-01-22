@@ -200,10 +200,14 @@ class ExchangeInterface():
 
         return btc_value
 
-    def create_order(self,symbol,order_type,side,amount,exchange):
+    def create_order(self,symbol,order_type,side,amount price=None, params={},exchange):
+        """Create an order on the exchange
+
+        """
 
         try:
             self.exchange[exchange].create_order(symbol,order_type,side,amount)
+            time.sleep(self.exchanges[exchange].rateLimit / 1000)
 
         except ccxt.BaseError:
             self.logger.warn("Unable to create order")
