@@ -99,7 +99,7 @@ First, clone or download the repository to your computer.
 
 First, you'll need to use webpack to bundle all of the React .jsx files on the front end. Navigate to the *app/beahviours/ui/www* directory and run `npm run build`.
 
-(Without Docker) Next, navigate to the *app/behaviours/ui* directory and run `python server.py`.
+(Without Docker) Next, navigate to the *app/ directory and run `python app.py`.
 
 (With Docker) Run `docker-compose up` in the root directory.
 
