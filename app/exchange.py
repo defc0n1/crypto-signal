@@ -199,3 +199,11 @@ class ExchangeInterface():
             self.logger.warn("Unable to get btc value for %s", base_symbol)
 
         return btc_value
+
+    def create_order(self,symbol,order_type,side,amount,exchange):
+
+        try:
+            self.exchange[exchange].create_order(symbol,order_type,side,amount)
+
+        except ccxt.BaseError:
+            self.logger.warn("Unable to create order")
