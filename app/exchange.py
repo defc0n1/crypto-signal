@@ -200,7 +200,7 @@ class ExchangeInterface():
 
         return btc_value
 
-    def create_order(self,symbol,order_type,side,amount price=None, params={},exchange):
+    def create_order(self,exchange,symbol,order_type,side,amount, price=None, params={}):
         """Create an order on the exchange
 
         """
