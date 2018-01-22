@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 
-from logs import configure_logging
+from .behaviours import configure_logging
 from conf import Configuration
 from behaviours.ui.backtesting.chart import Chart
 from behaviours.ui.backtesting.strategy import BacktestingStrategy

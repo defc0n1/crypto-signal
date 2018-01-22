@@ -4,6 +4,7 @@ dev.sh
 default-config.json
 app/errors.log
 .idea/
+.DS_Store
 app/behaviours/ui/www/static/index.js
 app/behaviours/ui/www/node_modules/
 
