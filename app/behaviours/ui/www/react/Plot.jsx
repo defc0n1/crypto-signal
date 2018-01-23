@@ -25,7 +25,9 @@ class Plot extends React.Component {
 
     /* When component is being updated, erase the previous graph and replace it with new data */
     componentDidUpdate() {
-	    $('#d3plot').html('<svg width="960" height="500"></svg>');
+        const windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+	    $('#d3plot').html(`<svg width=${windowWidth} height="500"></svg>`);
 	    this.updatePlot();
     }
 
@@ -55,10 +57,6 @@ class Plot extends React.Component {
         const line = d3.line()
             .x(d => x(d[0]))
             .y(d => y(d[1]));
-
-        const indicator = d3.line()
-            .x((d, i) => x(i))
-            .y(d => y(d));
 
         x.domain(d3.extent(this.props.closingPrices, d => d[0] ));
         y.domain(d3.extent(this.props.closingPrices, d => d[1] ));
@@ -113,7 +111,7 @@ class Plot extends React.Component {
             .attr("stroke-linecap", "round")
             .attr("stroke-dasharray", "5, 5")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
         const bollinger_lower = inner.append("path")
             .attr("clip-path", "url(#clipped-path)")
@@ -124,7 +122,7 @@ class Plot extends React.Component {
             .attr("stroke-linecap", "round")
             .attr("stroke-dasharray", "5, 5")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
         const sma9 = inner.append("path")
             .attr("clip-path", "url(#clipped-path)")
@@ -134,7 +132,7 @@ class Plot extends React.Component {
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
         const sma15 = inner.append("path")
             .attr("clip-path", "url(#clipped-path)")
@@ -144,7 +142,7 @@ class Plot extends React.Component {
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
         /* Plot all the buys as green dots */
         const buys = inner.selectAll("scatter-buys")

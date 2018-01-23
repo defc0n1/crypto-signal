@@ -1,0 +1,128 @@
+{
+  "settings": {
+    "log_mode": "text",
+    "market_pairs": [],
+    "loglevel": "",
+    "update_interval": 300,
+    "selected_task": "default"
+  },
+
+  "database": {
+    "engine": "sqlite",
+    "host": "",
+    "port": "",
+    "db_name": "",
+    "username": "",
+    "password": ""
+  },
+
+  "exchanges": {
+    "bittrex": {
+      "required": {
+        "enabled": true
+      },
+      "optional": {
+        "key": "",
+        "secret": ""
+      }
+    }
+  },
+
+  "notifiers": {
+    "twilio": {
+      "required": {
+        "key": "",
+        "secret": "",
+        "sender_number": "",
+        "receiver_number": ""
+      }
+    },
+    "slack": {
+      "required": {
+        "webhook": ""
+      }
+    },
+    "gmail": {
+      "required": {
+        "username": "",
+        "password": "",
+        "destination_emails": []
+      }
+    },
+    "integram": {
+      "required": {
+        "url": ""
+      }
+    }
+  },
+
+  "behaviours": {
+    "default": {
+      "rsi": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 30,
+        "cold": 70
+      },
+      "breakout": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 0.8,
+        "cold": 0.4
+      },
+      "macd": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 0.0,
+        "cold": 0.0
+      },
+      "sma": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 1.0,
+        "cold": 1.0
+      },
+      "ema": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 1.0,
+        "cold": 1.0
+      },
+      "ichimoku": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": true,
+        "cold": true
+      }
+    },
+    "server": {},
+    "simple_bot": {
+      "mode": "simulate",
+      "open_order_max_hours": 24,
+      "analysis_timeframe": "1d",
+      "strategy": "rsi",
+      "strategy_period": 14,
+      "buy": {
+        "strategy_threshold": 70,
+        "trade_limits": {
+          "BTC": 0.02,
+          "ETH": 0.2,
+          "LTC": 1.2,
+          "USDT": 250.0
+        }
+      },
+      "sell": {
+        "strategy_threshold": 30,
+        "trade_limits": {
+          "BTC": 0.02,
+          "ETH": 0.2,
+          "LTC": 1.2,
+          "USDT": 250.0
+        }
+      }
+    },
+    "reporter": {
+      "name": "default"
+    }
+  }
+}
