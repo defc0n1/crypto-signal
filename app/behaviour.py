@@ -43,8 +43,9 @@ class Behaviour(object):
         Returns:
             Behaviour: An instance of the behaviour class for the selected behaviour.
         """
-
+        
         behaviour_config = self.config.behaviours[selected_behaviour]
+
 
         if selected_behaviour == 'default':
             behaviour = self.__configure_default(behaviour_config)

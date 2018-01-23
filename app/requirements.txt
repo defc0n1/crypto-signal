@@ -16,3 +16,4 @@ slackweb==1.0.5
 flask==0.12.2
 matplotlib==2.1.0
 tenacity==4.8.0
+coinmarketcap==4.1.2

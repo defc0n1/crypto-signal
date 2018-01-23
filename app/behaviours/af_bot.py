@@ -5,6 +5,7 @@
 
 import ccxt
 import structlog
+import coinmarketcap
 
 class AFBot():
     """Default behaviour which gives users basic trading information.
@@ -84,16 +85,24 @@ class AFBot():
         symbols = []
         symbol_name = {}
         name_symbol = {}
+        coinmarketcapTicker = coinmarketcap.Market()
+        coins = coinmarketcapTicker.ticker()
+        #print(coins)
 
         for exchange in market_data:
             print(exchange)
-            if exchange == "bittrex":
+            if exchange == "binance":
                     
                 for market_pair in market_data[exchange]:
                     #print(market_data[exchange][market_pair])
-                    symbols.append(market_data[exchange][market_pair]['base'])
-                    symbol = market_data[exchange][market_pair]['info']['MarketCurrency']
-                    name = market_data[exchange][market_pair]['info']['MarketCurrencyLong'].lower()
+                    symbols.append(market_data[exchange][market_pair]['info']['symbol'])
+                    symbol = market_data[exchange][market_pair]['info']['baseAsset']
+                    for coin in coins:
+                        if coin['symbol'] == symbol:
+                            name = coin['name']
+
+                    
+                    #name = market_data[exchange][market_pair]['info']['MarketCurrencyLong'].lower()
                     symbol_name[symbol] = name
                     name_symbol[name] = symbol
                 
