@@ -25,7 +25,9 @@ class Plot extends React.Component {
 
     /* When component is being updated, erase the previous graph and replace it with new data */
     componentDidUpdate() {
-	    $('#d3plot').html('<svg width="960" height="500"></svg>');
+        const windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+	    $('#d3plot').html(`<svg width=${windowWidth} height="500"></svg>`);
 	    this.updatePlot();
     }
 
@@ -56,10 +58,6 @@ class Plot extends React.Component {
             .x(d => x(d[0]))
             .y(d => y(d[1]));
 
-        const indicator = d3.line()
-            .x((d, i) => x(i))
-            .y(d => y(d));
-
         x.domain(d3.extent(this.props.closingPrices, d => d[0] ));
         y.domain(d3.extent(this.props.closingPrices, d => d[1] ));
 
@@ -80,13 +78,16 @@ class Plot extends React.Component {
         const gY = g.append("g")
             .call(yAxis);
 
+        const coinPair = $('#coin-pair').val();
+        const baseCoin = coinPair.substring(coinPair.length - 3);
+
         gY.append("text")
             .attr("fill", "#000")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
             .attr("dy", "0.71em")
             .attr("text-anchor", "end")
-            .text("Price (BTC)");
+            .text(`Price (${baseCoin})`);
 
         const inner = g.append("g");
 
@@ -110,7 +111,7 @@ class Plot extends React.Component {
             .attr("stroke-linecap", "round")
             .attr("stroke-dasharray", "5, 5")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
         const bollinger_lower = inner.append("path")
             .attr("clip-path", "url(#clipped-path)")
@@ -121,27 +122,27 @@ class Plot extends React.Component {
             .attr("stroke-linecap", "round")
             .attr("stroke-dasharray", "5, 5")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
-        const movingaverage9 = inner.append("path")
+        const sma9 = inner.append("path")
             .attr("clip-path", "url(#clipped-path)")
-            .datum(this.props.indicators.movingaverage9)
+            .datum(this.props.indicators.sma9)
             .attr("fill", "none")
             .attr("stroke", "red")
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
-        const movingaverage15 = inner.append("path")
+        const sma15 = inner.append("path")
             .attr("clip-path", "url(#clipped-path)")
-            .datum(this.props.indicators.movingaverage15)
+            .datum(this.props.indicators.sma15)
             .attr("fill", "none")
             .attr("stroke", "green")
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("stroke-width", 1.5)
-            .attr("d", indicator);
+            .attr("d", line);
 
         /* Plot all the buys as green dots */
         const buys = inner.selectAll("scatter-buys")
@@ -208,8 +209,8 @@ class Plot extends React.Component {
             // sells.attr('r', 1/scale * 4.5);
 
             closings.attr('stroke-width', 1/scale * 1.5);
-            movingaverage9.attr('stroke-width', 1/scale * 1.5);
-            movingaverage15.attr('stroke-width', 1/scale * 1.5);
+            sma9.attr('stroke-width', 1/scale * 1.5);
+            sma15.attr('stroke-width', 1/scale * 1.5);
             bollinger_upper.attr('stroke-width', 1/scale * 1.5);
             bollinger_lower.attr('stroke-width', 1/scale * 1.5);
             buys.attr('r', 1/scale * 4.5);

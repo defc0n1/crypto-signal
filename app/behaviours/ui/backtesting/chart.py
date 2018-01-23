@@ -4,7 +4,7 @@ from time import time
 import matplotlib.pyplot as plt
 
 from exchange import ExchangeInterface
-from behaviours.ui.backtesting.indicators import BacktestingIndicators
+from analysis import StrategyAnalyzer
 from behaviours.ui.backtesting.candlestick import Candlestick
 
 """
@@ -17,6 +17,7 @@ class Chart(object):
         self.period = period
 
         self.start_time = start_time
+        self.indicators = StrategyAnalyzer(exchange_interface)
 
         self.data = []
 
@@ -36,34 +37,41 @@ class Chart(object):
     Returns the indicators specified in the **kwargs dictionary as a json-serializable dictionary
     '''
     def get_indicators(self, **kwargs):
+        from math import isnan
 
         # Indicators are hardcoded for now. Will be updated to accommodate variable-sized MA's
         response = {
             'bollinger_upper': [],
             'bollinger_lower': [],
-            'movingaverage9': [],
-            'movingaverage15': []
+            'sma9': [],
+            'sma15': []
         }
 
         # Get closing historical datapoints
-        closings = list(map(lambda x: x.close, self.data))
+        closings = [[0, 0, 0, 0, x.close, 0] for x in self.data]
 
         # The 'bollinger' keyword argument takes in a period, i.e. bollinger=21
         if "bollinger" in kwargs:
             period = kwargs["bollinger"]
             assert type(period) is int
 
-            bbupper, bblower = BacktestingIndicators.historical_bollinger_bands(closings)
-            response['bollinger_lower'] = list(bblower)
-            response['bollinger_upper'] = list(bbupper)
+            # Offset each band by "period" data points
+            bbupper = [(i, datum["values"][0]) for i, datum in enumerate(self.indicators.analyze_bollinger_bands(closings, all_data=True))][period:]
+            bblower = [(i, datum["values"][2]) for i, datum in enumerate(self.indicators.analyze_bollinger_bands(closings, all_data=True))][period:]
 
-        # The 'movingaverage' keyword argument takes in a list of periods, i.e. movingaverage=[9,15,21]
-        if "movingaverage" in kwargs:
-            periods = kwargs["movingaverage"]
+            response['bollinger_upper'] = bbupper
+            response['bollinger_lower'] = bblower
+
+
+        # The 'sma' keyword argument takes in a list of periods, i.e. sma=[9,15,21]
+        if "sma" in kwargs:
+            periods = kwargs["sma"]
             assert type(periods) is list
 
             for period in periods:
-                response['movingaverage' + str(period)] = list(BacktestingIndicators.historical_moving_average(closings, period=period))
+                # Offset each sma by "period" data points
+                response['sma' + str(period)] = [(i, datum["values"][0]) for i, datum in
+                                                 enumerate(self.indicators.analyze_sma(closings, period_count=period, all_data=True))][period:]
 
         return response
 
@@ -71,27 +79,29 @@ class Chart(object):
     Plots the specified indicators on a matplotlib plot
     '''
     def plot_indicators(self, **kwargs):
+        import numpy as np
 
-        # Get closing historical datapoints and plot them first
-        closings = list(map(lambda x: x.close, self.data))
-        plt.plot(closings)
+        # Get closing historical datapoints
+        closings = [[0, 0, 0, 0, x.close, 0] for x in self.data]
+        plt.plot([x.close for x in self.data])
 
         # The 'bollinger' keyword argument takes in a period, i.e. bollinger=21
         if "bollinger" in kwargs:
             period = kwargs["bollinger"]
             assert type(period) is int
 
-            bbupper, bblower = BacktestingIndicators.historical_bollinger_bands(closings)
+            bbupper = [np.nan_to_num(datum["values"][0]) for datum in self.indicators.analyze_bollinger_bands(closings, all_data=True)]
+            bblower = [np.nan_to_num(datum["values"][2]) for datum in self.indicators.analyze_bollinger_bands(closings, all_data=True)]
             plt.plot(np.arange(period, len(closings)), bbupper[period:], 'g--')
             plt.plot(np.arange(period, len(closings)), bblower[period:], 'b--')
 
-        # The 'movingaverage' keyword argument takes in a list of periods, i.e. movingaverage=[9,15,21]
-        if "movingaverage" in kwargs:
-            periods = kwargs["movingaverage"]
+        # The 'sma' keyword argument takes in a list of periods, i.e. sma=[9,15,21]
+        if "sma" in kwargs:
+            periods = kwargs["sma"]
             assert type(periods) is list
 
             for period in periods:
-                plt.plot(BacktestingIndicators.historical_moving_average(closings, period=period))
+                plt.plot([np.nan_to_num(datum["values"][0]) for datum in self.indicators.analyze_sma(closings, period_count=period, all_data=True)])
 
     '''
     Plots each buy trade as a green 'x', and each sell trade as a red 'x'

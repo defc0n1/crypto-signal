@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 
+import ccxt
 import structlog
 from behaviours.ui.backtesting.backtest import Backtester
 
@@ -32,24 +33,30 @@ class ServerBehaviour(object):
         self.db_handler = db_handler
 
         self.app = Flask(__name__, static_folder='www/static', template_folder='www/static/templates')
-        self.__add_log_handler()
         self.__add_backtesting_endpoints()
+        self.exchange_interface.override_exchange_config()
 
-    def __add_log_handler(self):
-        # Add a rotating file handler to keep track of error logging
-        if self.app.debug is not True:
-            import logging
-            from logging.handlers import RotatingFileHandler
-            file_handler = RotatingFileHandler('errors.log', maxBytes=1024 * 1024 * 100, backupCount=20)
-            file_handler.setLevel(logging.ERROR)
-            formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-            file_handler.setFormatter(formatter)
-            self.app.logger.addHandler(file_handler)
 
     def __add_backtesting_endpoints(self):
-        index_action = lambda: render_template("index.html")
+
+        def index_action():
+            return render_template("index.html")
+
+        def markets_action():
+            exchange = request.args.get('exchange')
+
+            markets = list(self.exchange_interface.get_markets_for_exchange(exchange))
+
+            return jsonify(response=200, result=markets)
+
+        def exchanges_action():
+            exchanges = ccxt.exchanges
+
+            return jsonify(response=200, result=exchanges)
+
 
         def backtesting_action():
+            exchange_name = request.args.get('exchangeName')
             coin_pair = request.args.get('pair')
             period_length = request.args.get('period')
             capital = float(request.args.get('capital'))
@@ -61,18 +68,22 @@ class ServerBehaviour(object):
             buy_strategy = post_data['buyStrategy']
             sell_strategy = post_data['sellStrategy']
 
-            # TODO: Change 'bittrex' to an arbitrary exchange passed in by query params
-            backtester = Backtester(coin_pair, period_length, 'bittrex', self.exchange_interface, capital, stop_loss, start_time, buy_strategy,
-                                    sell_strategy, indicators)
-            backtester.run()
-            result = backtester.get_results()
+            try:
+                backtester = Backtester(coin_pair, period_length, exchange_name, self.exchange_interface, capital, stop_loss,
+                                    start_time, buy_strategy, sell_strategy, indicators)
+                backtester.run()
+                result = backtester.get_results()
 
-            # result = backtest(coin_pair, period_length, capital, stop_loss, num_data, buy_strategy, sell_strategy, indicators)
+                return jsonify(response=200, result=result)
 
-            return jsonify(response=200, result=result)
+            except Exception as e:
+                # Return the exception message if the selected exchange encounters an error while fetching historical data
+                return jsonify(response=500, result={'message': str(e)})
 
         self.add_endpoint(endpoint='/', endpoint_name='index', handler=index_action)
         self.add_endpoint(endpoint='/backtest', endpoint_name='backtest', methods=['POST'], handler=backtesting_action)
+        self.add_endpoint(endpoint='/markets', endpoint_name='markets', handler=markets_action)
+        self.add_endpoint(endpoint='/exchanges', endpoint_name='exchanges', handler=exchanges_action)
 
     def run(self, debug=True):
         self.app.run(debug=debug, host='0.0.0.0', port=5000)

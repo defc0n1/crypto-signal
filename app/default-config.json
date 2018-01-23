@@ -25,28 +25,7 @@
         "key": "",
         "secret": ""
       }
-    },
-
-    "gdax": {
-      "required": {
-        "enabled": false
-      },
-      "optional": {
-        "key": "aea59df1e9267883dbb9b19faca4ee54",
-        "secret": "uqcshdqB2T9ZDenESMYFws7hm233XuwLm2TOxPdiaO7fCyjz1iJWdkrdUrSeTUCSGxYr227yS/2YD1Z5+BmM9w=="
-      }
-    },
-
-    "binance": {
-      "required": {
-        "enabled": false
-      },
-      "optional": {
-        "key": "N4pOnBgids2g0jexFCdVouYXlShie8LiPneBWoFsIsf7bsmIW0d2PlnsZwfQvQwM",
-        "secret": "rMiSt7FxgwYjDr1XttpOA6KWOIgioDUb4hLT9o9HABFjyCHlpWBGSk15do3Rl0sW"
-      }
     }
- 
   },
 
   "notifiers": {
@@ -60,8 +39,7 @@
     },
     "slack": {
       "required": {
-        "key": "",
-        "channel": ""
+        "webhook": ""
       }
     },
     "gmail": {
@@ -81,19 +59,51 @@
   "behaviours": {
     "default": {
       "rsi": {
+        "enabled": true,
+        "alert_enabled": true,
         "hot": 30,
         "cold": 70
       },
       "breakout": {
+        "enabled": true,
+        "alert_enabled": true,
         "hot": 0.8,
         "cold": 0.4
+      },
+      "macd": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 0.0,
+        "cold": 0.0
+      },
+      "sma": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 1.0,
+        "cold": 1.0
+      },
+      "ema": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": 1.0,
+        "cold": 1.0
+      },
+      "ichimoku": {
+        "enabled": true,
+        "alert_enabled": true,
+        "hot": true,
+        "cold": true
       }
     },
-    "rsi_bot": {
+    "server": {},
+    "simple_bot": {
       "mode": "simulate",
       "open_order_max_hours": 24,
+      "analysis_timeframe": "1d",
+      "strategy": "rsi",
+      "strategy_period": 14,
       "buy": {
-        "rsi_threshold": 30,
+        "strategy_threshold": 70,
         "trade_limits": {
           "BTC": 0.02,
           "ETH": 0.2,
@@ -102,7 +112,7 @@
         }
       },
       "sell": {
-        "rsi_threshold": 70,
+        "strategy_threshold": 30,
         "trade_limits": {
           "BTC": 0.02,
           "ETH": 0.2,

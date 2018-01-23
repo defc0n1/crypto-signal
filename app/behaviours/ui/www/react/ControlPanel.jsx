@@ -17,8 +17,8 @@ class ControlPanel extends React.Component {
        }};
 
        this.acceptableIndicators = {"Current Price": "currentprice",
-                                    "Moving Average (9 Period)": "movingaverage9",
-                                    "Moving Average (15 Period)": "movingaverage15",
+                                    "Moving Average (9 Period)": "sma9",
+                                    "Moving Average (15 Period)": "sma15",
                                     "RSI": "rsi"};
    }
 
@@ -30,8 +30,8 @@ class ControlPanel extends React.Component {
                             <select id={id} className="indicator-dropdown">
                                <option value="" disabled defaultValue>Choose an indicator...</option>
                                  <option value="currentprice">Current Price</option>
-                                 <option value="movingaverage9">Moving Average (9 Period)</option>
-                                 <option value="movingaverage15">Moving Average (15 Period)</option>
+                                 <option value="sma9">Moving Average (9 Period)</option>
+                                 <option value="sma15">Moving Average (15 Period)</option>
                                  <option value="rsi">RSI</option>
                              </select>;
 
@@ -51,6 +51,15 @@ class ControlPanel extends React.Component {
        const coinFields = <div>
                             <div className="row">
                              <div className="input-field col s6">
+                             <select id="exchange" onChange={(evt) => this.props.getMarketPairs($('#exchange').val())} >
+                               <option value="" disabled defaultValue>Pick an exchange...</option>
+                                 { this.props.exchanges.map(exc =>
+                                     <option key={exc} value={exc} >{exc}</option>
+                                 )}
+                             </select>
+                             <label>Exchange</label>
+                             </div>
+                             <div className="input-field col s6">
                              <select id="coin-pair">
                                <option value="" disabled defaultValue>Pick a coin pair...</option>
                                  { this.props.coinPairs.map(pair =>
@@ -59,13 +68,9 @@ class ControlPanel extends React.Component {
                              </select>
                              <label>Coin Pair</label>
                              </div>
-                             <div className="input-field col s6">
-                               <input placeholder="Eg: 0.01" id="amount-btc" type="text" className="validate" />
-                               <label className="active" htmlFor="amount-btc">Capital</label>
-                             </div>
                             </div>
                             <div className="row">
-                             <div className="input-field col s4">
+                             <div className="input-field col s6">
                                <select id="time-unit">
                                <option value="" disabled defaultValue>Pick a time unit...</option>
                                  { this.props.timeUnits.map(unit =>
@@ -74,15 +79,21 @@ class ControlPanel extends React.Component {
                                </select>
                                <label>Time Unit</label>
                              </div>
-                             <div className="input-field col s4">
-                               <input defaultValue="0" id="stop-loss" type="text" className="validate" />
-                               <label className="active" htmlFor="stop-loss">Stop Loss</label>
-                             </div>
-                             <div className="input-field col s4">
+                             <div className="input-field col s6">
                                {/*<input defaultValue="all" id="num-data" type="text" className="validate" />*/}
                                <input id="start-time" type="text" className="datepicker" />
                                <label className="active" htmlFor="start-time">Start Time</label>
                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="input-field col s6">
+                               <input placeholder="Eg: 0.01" id="amount-btc" type="text" className="validate" />
+                               <label className="active" htmlFor="amount-btc">Capital</label>
+                              </div>
+                              <div className="input-field col s6">
+                               <input defaultValue="0" id="stop-loss" type="text" className="validate" />
+                               <label className="active" htmlFor="stop-loss">Stop Loss (%)</label>
+                              </div>
                             </div>
                            </div>;
 
@@ -148,11 +159,11 @@ class ControlPanel extends React.Component {
                               <label htmlFor="bbands-box">Bollinger Bands</label>
                             </p>
                             <p>
-                              <input type="checkbox" id="ma-9-box" defaultChecked={showIndicators.movingaverage9} />
+                              <input type="checkbox" id="ma-9-box" defaultChecked={showIndicators.sma9} />
                               <label htmlFor="ma-9-box">Moving Average (9 Period)</label>
                             </p>
                             <p>
-                              <input type="checkbox" id="ma-15-box" defaultChecked={showIndicators.movingaverage15} />
+                              <input type="checkbox" id="ma-15-box" defaultChecked={showIndicators.sma15} />
                               <label htmlFor="ma-15-box">Moving Average (15 Period)</label>
                             </p>
                             {/*<p>*/}
@@ -171,15 +182,15 @@ class ControlPanel extends React.Component {
                   <div className="card light-blue accent-3">
                     <div className="card-content white-text">
                         <div className="row">
-                          <div className="col s6 m4">
+                          <div className="col s12 m4">
                             <span className="card-title">Coin Information</span>
                             { coinFields }
                           </div>
-                          <div className="col s6 m5 strategy">
+                          <div className="col s12 m5 strategy">
                             <span className="card-title">Strategy</span>
                             { strategyFields }
                           </div>
-                          <div className="col s6 m3">
+                          <div className="col s12 m3">
                             <span className="card-title">Plot</span>
                             { indicatorCheckboxes }
                           </div>
@@ -196,6 +207,9 @@ class ControlPanel extends React.Component {
    }
 
    setupMaterializePlugins() {
+       // Capture the outer scope
+       const that = this;
+
        // Activate the dropdowns when the compoment mounts
        $('select').material_select();
 
@@ -218,7 +232,15 @@ class ControlPanel extends React.Component {
                "RSI": null
            },
            minLength: 0
-       }), 200);
+       }), 400);
+
+       // jQuery evenet handler since React doesn't fire onChange for this component,
+       // need to figure out why eventually. Unbind hack to avoid double-ly firing this handler. MESSY
+       $('#exchange').unbind();
+       $('#exchange').on('change', function() {
+           const exchange = $(this).val();
+           that.props.getMarketPairs(exchange);
+       });
    }
 
    componentDidMount() {
@@ -230,6 +252,7 @@ class ControlPanel extends React.Component {
    }
 
    requestBacktest() {
+       const exchangeName = $('#exchange').val();
        const coinPair = $('#coin-pair').val();
        const timeUnit = $('#time-unit').val();
        const capital = $('#amount-btc').val();
@@ -237,17 +260,23 @@ class ControlPanel extends React.Component {
        let startTime = $('#start-time').val();
 
        const capitalReg = /(^[1-9][0-9]*$)|(^[0-9]*\.[0-9]*$)/;
+       const stopLossReg = /(^(100)$|(^[0-9]?[0-9](\.[0-9]+)?$))/;
 
        if (!capitalReg.exec(capital)) {
            swal("Uh Oh!", "You need to enter a valid number for your starting capital.", "error");
            throw "Invalid Capital";
        }
 
+       if (!stopLossReg.exec(stopLoss)) {
+           swal("Uh Oh!", "You need to enter a valid percentage (0 - 100) for your stop loss.", "error");
+           throw "Invalid Stop Loss";
+       }
+
        // Convert start time to epoch
        startTime = new Date(startTime).getTime() / 1000;
 
        let indicators = {
-           'movingaverage': []
+           'sma': []
        };
 
        if ($('#bbands-box').is(':checked')) {
@@ -255,17 +284,17 @@ class ControlPanel extends React.Component {
        }
 
        if ($('#ma-9-box').is(':checked')) {
-           indicators['movingaverage'].push(9);
+           indicators['sma'].push(9);
        }
 
        if ($('#ma-15-box').is(':checked')) {
-           indicators['movingaverage'].push(15);
+           indicators['sma'].push(15);
        }
 
        const [buyStrategy, sellStrategy] = this.getStrategies();
 
 
-       this.props.getBacktestingData(coinPair, timeUnit, capital, startTime, stopLoss, buyStrategy, sellStrategy, indicators);
+       this.props.getBacktestingData(exchangeName, coinPair, timeUnit, capital, startTime, stopLoss, buyStrategy, sellStrategy, indicators);
    }
 
    getStrategies() {
