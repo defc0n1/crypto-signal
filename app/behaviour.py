@@ -12,7 +12,7 @@ from behaviours.default import DefaultBehaviour
 
 from behaviours.af_bot import AFBot
 
-from behaviours.rsi_bot import RsiBotBehaviour
+
 
 from behaviours.simple_bot import SimpleBotBehaviour
 
