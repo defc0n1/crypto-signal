@@ -85,9 +85,10 @@ class AFBot():
         symbols = []
         symbol_name = {}
         name_symbol = {}
+        #get all coins from coinmarketcap
         coinmarketcapTicker = coinmarketcap.Market()
         coins = coinmarketcapTicker.ticker()
-        #print(coins)
+        
 
         for exchange in market_data:
             print(exchange)
@@ -97,6 +98,8 @@ class AFBot():
                     #print(market_data[exchange][market_pair])
                     symbols.append(market_data[exchange][market_pair]['info']['symbol'])
                     symbol = market_data[exchange][market_pair]['info']['baseAsset']
+                    
+                    #lookup altcoin name by altcoin symbol
                     for coin in coins:
                         if coin['symbol'] == symbol:
                             name = coin['name']
