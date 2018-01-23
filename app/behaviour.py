@@ -204,6 +204,7 @@ class Behaviour(object):
             exchange_interface,
             strategy_analyzer,
             sentiment_analyzer,
-            notifier)
+            notifier,
+            db_handler)
 
         return behaviour

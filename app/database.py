@@ -296,3 +296,41 @@ class DatabaseHandler():
             self.logger.error("Failed to update transaction record!", update_args=update_args)
             self.session.rollback()
         return update_success
+
+
+    def create_youtubesentiment(self, create_args):
+        """Attempts to create a record in the youtubeSentiment table.
+
+        Args:
+            create_args (dict): A dictionary of column value mappings.
+
+        Returns:
+            bool: Was the create a success?
+        """
+
+        create_success = True
+        try:
+            self.session.add(YoutubeSentiment(**create_args))
+            self.session.commit()
+        except SQLAlchemyError:
+            create_success = False
+            self.logger.error("Failed to create youtube sentiment record!", create_args=create_args)
+            self.session.rollback()
+        return create_success
+
+    def read_youtubesentiment(self, filter_args={}):
+        """Returns a query object containing the contents of the youtubesentiment table.
+
+        Args:
+            filter_args (dict): A dictionary of query filter values.
+
+        Returns:
+            sqlalchemy.Query: A sqlalchemy query object with applied filters.
+        """
+
+        return self.session.query(YoutubeSentiment).filter_by(**filter_args)
+
+
+
+
+

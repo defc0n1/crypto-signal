@@ -11,7 +11,7 @@ class AFBot():
     """Default behaviour which gives users basic trading information.
     """
 
-    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer,sentiment_analyzer,notifier):
+    def __init__(self, behaviour_config, exchange_interface, strategy_analyzer,sentiment_analyzer,notifier,db_handler):
         """Initializes DefaultBehaviour class.
 
         Args:
@@ -29,6 +29,7 @@ class AFBot():
         self.strategy_analyzer = strategy_analyzer
         self.sentiment_analyzer = sentiment_analyzer
         self.notifier = notifier
+        self.db_handler = db_handler
 
     def run(self, market_pairs):
         """The behaviour entrypoint
@@ -98,7 +99,7 @@ class AFBot():
                     #print(market_data[exchange][market_pair])
                     symbols.append(market_data[exchange][market_pair]['info']['symbol'])
                     symbol = market_data[exchange][market_pair]['info']['baseAsset']
-                    
+
                     #lookup altcoin name by altcoin symbol
                     for coin in coins:
                         if coin['symbol'] == symbol:
@@ -112,6 +113,9 @@ class AFBot():
                 try:
 
                     youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels,symbols,symbol_name,name_symbol)
+                    holding_payload = {'exchange': exchange,'symbol': symbol,'volume_free': 0,'volume_used': 0,'volume_total': 0}
+
+                    self.db_handler.create_holding(holding_payload)
                 except:
                     print("Error analysing youtube sentiement")
 
