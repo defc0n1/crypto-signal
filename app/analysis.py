@@ -1,7 +1,8 @@
 """Executes the trading strategies and analyzes the results.
 """
 
-from datetime import datetime, timedelta, timezone
+import math
+from datetime import datetime
 
 import structlog
 import pandas
@@ -52,32 +53,6 @@ class StrategyAnalyzer():
         return dataframe
 
 
-    def get_historical_data(self, market_pair, exchange, time_unit, max_days=100):
-        """Fetches the historical data
-
-        Args:
-            market_pair (str): Contains the symbol pair to operate on i.e. BURST/BTC
-            exchange (str): Contains the exchange to fetch the historical data from.
-            time_unit (str): A string specifying the ccxt time unit i.e. 5m or 1d.
-            max_days (int, optional): Defaults to 100. Maximum number of days to fetch data for.
-
-        Returns:
-            list: Contains a list of lists which contain timestamp, open, high, low, close, volume.
-        """
-
-        # The data_start_date timestamp must be in milliseconds hence * 1000.
-        data_start_date = datetime.now() - timedelta(days=max_days)
-        data_start_date = int(data_start_date.replace(tzinfo=timezone.utc).timestamp() * 1000)
-        historical_data = self.__exchange_interface.get_historical_data(
-            market_pair=market_pair,
-            exchange=exchange,
-            time_unit=time_unit,
-            start_date=data_start_date
-        )
-
-        return historical_data
-
-
     def analyze_macd(self, historial_data, hot_thresh=None, cold_thresh=None, all_data=False):
         """Performs a macd analysis on the historical data
 
@@ -100,6 +75,9 @@ class StrategyAnalyzer():
 
         macd_result_data = []
         for macd_value in macd_values:
+            if math.isnan(macd_value):
+                continue
+
             is_hot = False
             if hot_thresh is not None:
                 is_hot = macd_value > hot_thresh
@@ -118,9 +96,11 @@ class StrategyAnalyzer():
 
         if all_data:
             return macd_result_data
-
         else:
-            return macd_result_data[-1]
+            if macd_result_data:
+                return macd_result_data[-1]
+            else:
+                return macd_result_data
 
 
     def analyze_breakout(self, historial_data, period_count=5, hot_thresh=None, cold_thresh=None):
@@ -153,6 +133,9 @@ class StrategyAnalyzer():
         is_cold = False
         if cold_thresh is not None:
             is_cold = breakout_value < cold_thresh
+
+        if math.isnan(breakout_value):
+            breakout_value = None
 
         breakout_result_data = {
             'values': (breakout_value,),
@@ -188,6 +171,9 @@ class StrategyAnalyzer():
 
         rsi_result_data = []
         for rsi_value in rsi_values:
+            if math.isnan(rsi_value):
+                continue
+
             is_hot = False
             if hot_thresh is not None:
                 is_hot = rsi_value < hot_thresh
@@ -207,7 +193,10 @@ class StrategyAnalyzer():
         if all_data:
             return rsi_result_data
         else:
-            return rsi_result_data[-1]
+            if rsi_result_data:
+                return rsi_result_data[-1]
+            else:
+                return rsi_result_data
 
 
     def analyze_sma(self, historial_data, period_count=15,
@@ -237,6 +226,9 @@ class StrategyAnalyzer():
 
         sma_result_data = []
         for sma_row in combined_data.iterrows():
+            if math.isnan(sma_row[1]['sma_value']):
+                continue
+
             is_hot = False
             if hot_thresh is not None:
                 threshold = sma_row[1]['sma_value'] * hot_thresh
@@ -258,7 +250,10 @@ class StrategyAnalyzer():
         if all_data:
             return sma_result_data
         else:
-            return sma_result_data[-1]
+            if sma_result_data:
+                return sma_result_data[-1]
+            else:
+                return sma_result_data
 
 
     def analyze_ema(self, historial_data, period_count=15,
@@ -286,8 +281,11 @@ class StrategyAnalyzer():
         combined_data = pandas.concat([dataframe, ema_values], axis=1)
         combined_data.rename(columns={0: 'ema_value'}, inplace=True)
 
-        sma_result_data = []
+        ema_result_data = []
         for ema_row in combined_data.iterrows():
+            if math.isnan(ema_row[1]['ema_value']):
+                continue
+
             is_hot = False
             if hot_thresh is not None:
                 threshold = ema_row[1]['ema_value'] * hot_thresh
@@ -304,12 +302,15 @@ class StrategyAnalyzer():
                 'is_hot': is_hot
             }
 
-            sma_result_data.append(data_point_result)
+            ema_result_data.append(data_point_result)
 
         if all_data:
-            return sma_result_data
+            return ema_result_data
         else:
-            return sma_result_data[-1]
+            if ema_result_data:
+                return ema_result_data[-1]
+            else:
+                return ema_result_data
 
 
     def analyze_ichimoku_cloud(self, historial_data, hot_thresh=None, cold_thresh=None):
@@ -356,6 +357,12 @@ class StrategyAnalyzer():
             if historial_data[-1][4] < leading_span_b:
                 is_cold = True
 
+        if math.isnan(tenkan_sen):
+            tenkan_sen = None
+
+        if math.isnan(kijun_sen):
+            kijun_sen = None
+
         ichimoku_data = {
             'values': (tenkan_sen, kijun_sen),
             'is_hot': is_hot,
@@ -379,10 +386,15 @@ class StrategyAnalyzer():
         """
 
         dataframe = self.__convert_to_dataframe(historial_data)
-        bollinger_data = abstract.BBANDS(dataframe)
+        bollinger_data = abstract.BBANDS(dataframe, 21)
 
         bb_result_data = []
         for bb_row in bollinger_data.iterrows():
+            if math.isnan(bb_row[1]['upperband']) or\
+                math.isnan(bb_row[1]['middleband']) or\
+                math.isnan(bb_row[1]['lowerband']):
+                continue
+
             data_point_result = {
                 'values': (
                     bb_row[1]['upperband'],
@@ -398,4 +410,7 @@ class StrategyAnalyzer():
         if all_data:
             return bb_result_data
         else:
-            return bb_result_data[-1]
+            if bb_result_data:
+                return bb_result_data[-1]
+            else:
+                return bb_result_data
