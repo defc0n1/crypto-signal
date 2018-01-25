@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import logging
 
 
-logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
+logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 
 """Perform sentiment analysis on youtube
 """

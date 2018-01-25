@@ -21,7 +21,7 @@ class SentimentAnalyzer():
     def __init__(self,exchange_interface):
         self.__exchange_interface = exchange_interface
         self.logger = structlog.get_logger()
-        self.db_handler = db_handler
+        
 
     def analyze_twitter_sentiment(self, market_pair):
         print("analyzing twitter sentiment")
@@ -30,6 +30,7 @@ class SentimentAnalyzer():
         print("analyzing youtube sentiment")
         youtube_analyzer = YoutubeAnalysis()
         text_sentiment = TextSentiment()
+        aggregatedSentiment = []
 
 
         DEVELOPER_KEY = "AIzaSyDZCSMHobf8xPmmWF1CvqQiwo5wUXc3Bec"
@@ -50,10 +51,11 @@ class SentimentAnalyzer():
              coins = text_sentiment.extract_symbols(text,symbol_name,name_symbol)
              sentiment, overall = text_sentiment.get_sentiment_analysis(text, coins)
              to_buy = text_sentiment.get_verdict(sentiment, overall)
-             print("BUY:")
-             print(to_buy)
+
+             aggregatedSentiment.append(to_buy)
 
              #print(videos)
              ##print(data)
              #print(comments)
-        #return buy list
+        #aggregatedSentimentNoDupes = set(aggregatedSentiment)
+        return aggregatedSentiment

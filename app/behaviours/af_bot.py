@@ -71,7 +71,6 @@ class AFBot():
         'UCEhFzdgTPR8MmeL0z-xbA3g',
         'UCLXo7UDZvByw2ixzpQCufnA',
         'UCLXo7UDZvByw2ixzpQCufnA',
-        'CBQEgNYE8pB0qrUR5On9jYA',
         'UCLXo7UDZvByw2ixzpQCufnA',
         'UCkpt3vvZ0Y0wvTX2L-lkxsg',
         'UCLXo7UDZvByw2ixzpQCufnA',
@@ -113,11 +112,12 @@ class AFBot():
                 try:
 
                     youtube_sentiment = self.sentiment_analyzer.analyze_youtube_sentiment(channels,symbols,symbol_name,name_symbol)
-                    holding_payload = {'exchange': exchange,'symbol': symbol,'volume_free': 0,'volume_used': 0,'volume_total': 0}
+                    print(youtube_sentiment)
+                    #sentiment_payload = {'exchange': exchange,'symbol': symbol,'volume_free': 0,'volume_used': 0,'volume_total': 0}
 
-                    self.db_handler.create_holding(holding_payload)
-                except:
-                    print("Error analysing youtube sentiement")
+                    #self.db_handler.create_youtubesentiment(sentiment_payload)
+                except Exception as e:
+                    print(e)
 
         for exchange in market_data:
             for market_pair in market_data[exchange]:
