@@ -49,8 +49,10 @@ class SentimentAnalyzer():
              #print(symbol_name)
              #print(name_symbol)
              coins = text_sentiment.extract_symbols(text,symbol_name,name_symbol)
+             #print(coins)
              sentiment, overall = text_sentiment.get_sentiment_analysis(text, coins)
              to_buy = text_sentiment.get_verdict(sentiment, overall)
+             #print(to_buy)
 
              aggregatedSentiment.append(to_buy)
 
@@ -58,4 +60,5 @@ class SentimentAnalyzer():
              ##print(data)
              #print(comments)
         #aggregatedSentimentNoDupes = set(aggregatedSentiment)
-        return aggregatedSentiment
+        flat_list = [item for sublist in aggregatedSentiment for item in sublist]
+        return flat_list

@@ -43,7 +43,7 @@ class Twitter:
 
 		self.stream = Stream(self.auth, self.listener)	
 		self.stream.filter(follow=FOLLOW_IDS)
-	
+
 	def handle_tweet(self, tweet_json):
 		screen_name = tweet_json["user"]["screen_name"]
 		id = tweet_json["id_str"]

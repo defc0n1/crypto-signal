@@ -17,10 +17,10 @@ class TextSentiment():
 		for word in words:
 			if word.upper() in symbol_name:
 				symbols.add((word.upper(), symbol_name[word.upper()]))
-				# print(f'Found symbol: {word.upper()}')
+				print(f'Found symbol: {word.upper()}')
 			elif word.lower() in name_symbol:
 				symbols.add((name_symbol[word.lower()], word.lower()))   
-				# print(f'Found symbol: {name_symbol[word]}')
+				print(f'Found symbol: {name_symbol[word]}')
 
 		return symbols
 
