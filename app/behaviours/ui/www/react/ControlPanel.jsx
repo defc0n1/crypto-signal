@@ -19,7 +19,8 @@ class ControlPanel extends React.Component {
        this.acceptableIndicators = {"Current Price": "currentprice",
                                     "Moving Average (9 Period)": "sma9",
                                     "Moving Average (15 Period)": "sma15",
-                                    "RSI": "rsi"};
+                                    "RSI": "rsi",
+                                    "MACD": "macd"};
    }
 
    render() {
@@ -33,6 +34,7 @@ class ControlPanel extends React.Component {
                                  <option value="sma9">Moving Average (9 Period)</option>
                                  <option value="sma15">Moving Average (15 Period)</option>
                                  <option value="rsi">RSI</option>
+                                 <option value="macd">MACD</option>
                              </select>;
 
        const indicatorValue = (id) => <div>
@@ -229,7 +231,8 @@ class ControlPanel extends React.Component {
                "Current Price": null,
                "Moving Average (9 Period)": null,
                "Moving Average (15 Period)": null,
-               "RSI": null
+               "RSI": null,
+               "MACD": null
            },
            minLength: 0
        }), 400);

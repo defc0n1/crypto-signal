@@ -1,9 +1,7 @@
-import json
 from time import time
 
 import matplotlib.pyplot as plt
 
-from exchange import ExchangeInterface
 from analysis import StrategyAnalyzer
 from behaviours.ui.backtesting.candlestick import Candlestick
 
@@ -17,7 +15,7 @@ class Chart(object):
         self.period = period
 
         self.start_time = start_time
-        self.indicators = StrategyAnalyzer(exchange_interface)
+        self.indicators = StrategyAnalyzer()
 
         self.data = []
 
@@ -37,14 +35,14 @@ class Chart(object):
     Returns the indicators specified in the **kwargs dictionary as a json-serializable dictionary
     '''
     def get_indicators(self, **kwargs):
-        from math import isnan
 
         # Indicators are hardcoded for now. Will be updated to accommodate variable-sized MA's
         response = {
             'bollinger_upper': [],
             'bollinger_lower': [],
             'sma9': [],
-            'sma15': []
+            'sma15': [],
+            'macd': []
         }
 
         # Get closing historical datapoints
@@ -62,7 +60,6 @@ class Chart(object):
             response['bollinger_upper'] = bbupper
             response['bollinger_lower'] = bblower
 
-
         # The 'sma' keyword argument takes in a list of periods, i.e. sma=[9,15,21]
         if "sma" in kwargs:
             periods = kwargs["sma"]
@@ -72,6 +69,11 @@ class Chart(object):
                 # Offset each sma by "period" data points
                 response['sma' + str(period)] = [(i + period, datum["values"][0]) for i, datum in
                                                  enumerate(self.indicators.analyze_sma(closings, period_count=period, all_data=True))]
+
+        # To avoid overcomplicating things, the MACD just needs to be present in the dictionary with an arbitrary value
+        if "macd" in kwargs:
+            # 33 seems to be the magic offset...?
+            response['macd'] = [(i + 33, datum["values"][0]) for i, datum in enumerate(self.indicators.analyze_macd(closings, all_data=True))]
 
         return response
 

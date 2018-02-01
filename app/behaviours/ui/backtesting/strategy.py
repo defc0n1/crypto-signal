@@ -1,7 +1,5 @@
 import random
 
-import matplotlib.pyplot as plt
-
 import structlog
 from behaviours.ui.backtesting.trade import Trade
 from analysis import StrategyAnalyzer
@@ -18,7 +16,7 @@ class BacktestingStrategy(object):
         self.sells = []
         self.buys = []
         self.max_trades_at_once = 1
-        self.indicators = StrategyAnalyzer(exchange_interface=None)
+        self.indicators = StrategyAnalyzer()
         self.profit = 0
         self.pair = pair
         self.reserve = capital
@@ -40,11 +38,13 @@ class BacktestingStrategy(object):
 
         # Hacky way to ensure indices match up :/
         rsi = [None] * 14
+        macd = [None] * 33
         nine_period = [None] * 9
         fifteen_period = [None] * 15
         nine_period_ema = [None] * 9
 
         rsi.extend(self.indicators.analyze_rsi(self.prices, period_count=14, all_data=True))
+        macd.extend(self.indicators.analyze_macd(self.prices, all_data=True))
         nine_period.extend(self.indicators.analyze_sma(self.prices, period_count=9, all_data=True))
         fifteen_period.extend(self.indicators.analyze_sma(self.prices, period_count=15, all_data=True))
         nine_period_ema.extend(self.indicators.analyze_ema(self.prices, period_count=9, all_data=True))
@@ -52,15 +52,16 @@ class BacktestingStrategy(object):
 
         for i in range(len(self.prices)):
 
-            # Get the (sampled) closing price
+            # Get the (sampled) closing price and other indicators
             current_price = self.prices[i][4]
-            current_rsi = rsi[i]["values"] if rsi[i] else None
-            current_nine_period = nine_period[i]["values"] if nine_period[i] else None
-            current_fifteen_period = fifteen_period[i]["values"] if fifteen_period[i] else None
-            current_nine_period_ema = nine_period_ema[i]["values"] if nine_period_ema[i] else None
+            current_rsi = rsi[i]["values"][0] if rsi[i] else None
+            current_macd = macd[i]["values"][0] if macd[i] else None
+            current_nine_period = nine_period[i]["values"][0] if nine_period[i] else None
+            current_fifteen_period = fifteen_period[i]["values"][0] if fifteen_period[i] else None
+            current_nine_period_ema = nine_period_ema[i]["values"][0] if nine_period_ema[i] else None
 
             decision = Decision({'currentprice': current_price, 'rsi': current_rsi, 'sma9': current_nine_period,
-                                 'sma15': current_fifteen_period, 'ema9': current_nine_period_ema})
+                                 'sma15': current_fifteen_period, 'ema9': current_nine_period_ema, 'macd': current_macd})
 
             open_trades = [trade for trade in self.trades if trade.status == 'OPEN']
 

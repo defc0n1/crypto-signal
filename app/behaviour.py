@@ -80,7 +80,7 @@ class Behaviour(object):
 
         exchange_interface = ExchangeInterface(self.config.exchanges)
 
-        strategy_analyzer = StrategyAnalyzer(exchange_interface)
+        strategy_analyzer = StrategyAnalyzer()
 
 
         sentiment_analyzer = SentimentAnalyzer(exchange_interface)
@@ -104,7 +104,7 @@ class Behaviour(object):
 
 
     def __configure_simple_bot(self, behaviour_config):
-        """Configures and returns the rsi bot behaviour class.
+        """Configures and returns the bot behaviour class.
 
         Args:
             behaviour_config (dict): A dictionary of configuration values pertaining to the
@@ -115,7 +115,7 @@ class Behaviour(object):
         """
 
         exchange_interface = ExchangeInterface(self.config.exchanges)
-        strategy_analyzer = StrategyAnalyzer(exchange_interface)
+        strategy_analyzer = StrategyAnalyzer()
         notifier = Notifier(self.config.notifiers)
         db_handler = DatabaseHandler(self.config.database)
 
@@ -167,7 +167,7 @@ class Behaviour(object):
         """
 
         exchange_interface = ExchangeInterface(self.config.exchanges)
-        strategy_analyzer = StrategyAnalyzer(exchange_interface)
+        strategy_analyzer = StrategyAnalyzer()
         notifier = Notifier(self.config.notifiers)
         db_handler = DatabaseHandler(self.config.database)
 

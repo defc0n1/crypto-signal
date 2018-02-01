@@ -15,15 +15,9 @@ class StrategyAnalyzer():
     """Contains all the methods required for analyzing strategies.
     """
 
-    def __init__(self, exchange_interface):
-        """Initializes StrategyAnalyzer class
+    def __init__(self):
+        """Initializes StrategyAnalyzer class """
 
-        Args:
-            exchange_interface (ExchangeInterface): An instances of the ExchangeInterface class for
-                interacting with exchanges.
-        """
-
-        self.__exchange_interface = exchange_interface
         self.logger = structlog.get_logger()
 
 
@@ -97,9 +91,59 @@ class StrategyAnalyzer():
         if all_data:
             return macd_result_data
         else:
-            if macd_result_data:
+            try:
                 return macd_result_data[-1]
-            else:
+            except IndexError:
+                return macd_result_data
+
+
+    def analyze_macd_sl(self, historial_data, hot_thresh=None, cold_thresh=None, all_data=False):
+        """Performs a macd analysis on the historical data using signal line for alerting
+
+        Args:
+            historial_data (list): A matrix of historical OHCLV data.
+            hot_thresh (float, optional): Defaults to None. The threshold at which this might be
+                good to purchase.
+            cold_thresh (float, optional): Defaults to None. The threshold at which this might be
+                good to sell.
+            all_data (bool, optional): Defaults to False. If True, we return the MACD associated
+                with each data point in our historical dataset. Otherwise just return the last one.
+
+        Returns:
+            dict: A dictionary containing a tuple of indicator values and booleans for buy / sell
+                indication.
+        """
+
+        dataframe = self.__convert_to_dataframe(historial_data)
+        macd_values = abstract.MACD(dataframe).iloc[:]
+
+        macd_result_data = []
+        for macd_row in macd_values.iterrows():
+            if math.isnan(macd_row[1]['macd']) or math.isnan(macd_row[1]['macdsignal']):
+                continue
+
+            is_hot = False
+            if hot_thresh is not None:
+                is_hot = macd_row[1]['macd'] > macd_row[1]['macdsignal']
+
+            is_cold = False
+            if cold_thresh is not None:
+                is_cold = macd_row[1]['macd'] < macd_row[1]['macdsignal']
+
+            data_point_result = {
+                'values': (macd_row[1]['macd'],),
+                'is_cold': is_cold,
+                'is_hot': is_hot
+            }
+
+            macd_result_data.append(data_point_result)
+
+        if all_data:
+            return macd_result_data
+        else:
+            try:
+                return macd_result_data[-1]
+            except IndexError:
                 return macd_result_data
 
 
@@ -193,9 +237,9 @@ class StrategyAnalyzer():
         if all_data:
             return rsi_result_data
         else:
-            if rsi_result_data:
+            try:
                 return rsi_result_data[-1]
-            else:
+            except IndexError:
                 return rsi_result_data
 
 
@@ -237,7 +281,7 @@ class StrategyAnalyzer():
             is_cold = False
             if cold_thresh is not None:
                 threshold = sma_row[1]['sma_value'] * cold_thresh
-                is_cold = sma_row[1]['close'] < sma_row[1]['sma_value']
+                is_cold = sma_row[1]['close'] < threshold
 
             data_point_result = {
                 'values': (sma_row[1]['sma_value'],),
@@ -250,9 +294,9 @@ class StrategyAnalyzer():
         if all_data:
             return sma_result_data
         else:
-            if sma_result_data:
+            try:
                 return sma_result_data[-1]
-            else:
+            except IndexError:
                 return sma_result_data
 
 
@@ -294,7 +338,7 @@ class StrategyAnalyzer():
             is_cold = False
             if cold_thresh is not None:
                 threshold = ema_row[1]['ema_value'] * cold_thresh
-                is_cold = ema_row[1]['close'] < ema_row[1]['ema_value']
+                is_cold = ema_row[1]['close'] < threshold
 
             data_point_result = {
                 'values': (ema_row[1]['ema_value'],),
@@ -307,9 +351,9 @@ class StrategyAnalyzer():
         if all_data:
             return ema_result_data
         else:
-            if ema_result_data:
+            try:
                 return ema_result_data[-1]
-            else:
+            except IndexError:
                 return ema_result_data
 
 
@@ -372,7 +416,7 @@ class StrategyAnalyzer():
         return ichimoku_data
 
 
-    def analyze_bollinger_bands(self, historial_data, all_data=False):
+    def analyze_bollinger_bands(self, historial_data, period_count=21, all_data=False):
         """Performs a bollinger band analysis on the historical data
 
         Args:
@@ -386,7 +430,7 @@ class StrategyAnalyzer():
         """
 
         dataframe = self.__convert_to_dataframe(historial_data)
-        bollinger_data = abstract.BBANDS(dataframe, 21)
+        bollinger_data = abstract.BBANDS(dataframe, period_count)
 
         bb_result_data = []
         for bb_row in bollinger_data.iterrows():
@@ -410,7 +454,7 @@ class StrategyAnalyzer():
         if all_data:
             return bb_result_data
         else:
-            if bb_result_data:
+            try:
                 return bb_result_data[-1]
-            else:
+            except IndexError:
                 return bb_result_data
