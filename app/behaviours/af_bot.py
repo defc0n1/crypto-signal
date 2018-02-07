@@ -56,7 +56,6 @@ class AFBot():
         'UCTKyJALgd09WxZBuWVbZzXQ',
         'UCmA06PHZc6O--2Yw4Vt4Wug',
         'UCkpMhY4N4ZjpqKMIjzLplKw',
-        'UCPWHmSfAsAiaKhMxNoIoByg',
         'UCLXo7UDZvByw2ixzpQCufnA',
         'UCLXo7UDZvByw2ixzpQCufnA',
         'UCLXo7UDZvByw2ixzpQCufnA',
