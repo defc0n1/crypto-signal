@@ -301,6 +301,20 @@ class ExchangeInterface():
             self.logger.warn("Unable to create order")
 
 
+    def fetch_balance(self):
+        """fetch balance
+        """
+
+        try:
+            open_balances = {}
+            for exchange in self.exchanges:
+                open_balances[exchange] = self.exchanges[exchange].fetch_balance()
+            return open_balances
+            
+        except ccxt.BaseError:
+            self.logger.warn("cant fetch balance")
+
+
     @retry(retry=retry_if_exception_type(ccxt.NetworkError), stop=stop_after_attempt(3))
     def get_btc_volume(self, exchange, base_symbol):
         """Get the volume of BTC exchange for a given symbol in a given period.

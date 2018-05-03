@@ -42,6 +42,9 @@ class AFBot():
             market_data = self.exchange_interface.get_symbol_markets(market_pairs)
         else:
             market_data = self.exchange_interface.get_exchange_markets()
+            #open_orders = self.exchange_interface.get_open_orders()
+
+
 
         self.__test_strategies(market_data)
 
@@ -91,8 +94,10 @@ class AFBot():
 
         for exchange in market_data:
             print(exchange)
+            print(self.exchange_interface.fetch_balance())
             if exchange == "binance":
-                    
+                 
+                
                 for market_pair in market_data[exchange]:
                     #print(market_data[exchange][market_pair])
                     symbols.append(market_data[exchange][market_pair]['info']['symbol'])
